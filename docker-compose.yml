@@ -1,0 +1,27 @@
+version: "3.3"
+
+services:
+    nginx:
+        restart: always
+        build:
+            context: ./nginx
+            dockerfile: Dockerfile
+            args:
+                DOMAIN: ${DOMAIN}
+                IP: ${IP}
+        ports:
+            - "0.0.0.0:80:80"
+            - "0.0.0.0:443:443"
+        volumes:
+            - /etc/letsencrypt:/etc/letsencrypt
+        links:
+            - flask_app:flask_app
+    flask_app:
+        restart: always
+        build:
+            context: ./core
+            dockerfile: Dockerfile
+        expose:
+            - "5000"
+        volumes:
+            - .:/usr/src/app
